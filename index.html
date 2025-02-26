@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Solar System Simulator</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            font-family: Arial, sans-serif;
+        }
+
+        #infoPanel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            max-width: 350px;
+            font-size: 14px;
+        }
+
+        #closeBtn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+            color: #ff4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="infoPanel">
+        <span id="closeBtn">X</span>
+        <h2 id="planetName"></h2>
+        <p id="planetInfo"></p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // Scene Setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 50, 100);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // Advanced Lighting
+        const sunLight = new THREE.PointLight(0xffffff, 3, 1000);
+        sunLight.position.set(0, 0, 0);
+        scene.add(sunLight);
+
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
+
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.3);
+        hemiLight.position.set(0, 100, 0);
+        scene.add(hemiLight);
+
+        // Texture Loader
+        const loader = new THREE.TextureLoader();
+
+        // Starry Background
+        const starGeometry = new THREE.BufferGeometry();
+        const starCount = 5000;
+        const positions = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 2000;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
+        }
+        starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        // Planets Data with Detailed Information
+        const planets = [
+            {
+                name: "Sun", radius: 5, distance: 0, speed: 0, tilt: 0, rotation: 0.01, texture: "sun.jpg",
+                info: "Diameter: 1.391 million km\nMass: 1.989 × 10³⁰ kg\nAge: 4.6 billion years\nType: G-type main-sequence star\nCore Temp: 15 million °C\nContains 99.86% of Solar System's mass"
+            },
+            {
+                name: "Mercury", radius: 0.5, distance: 10, speed: 0.04, tilt: 0.034, rotation: 0.003, texture: "mercury.jpg",
+                info: "Diameter: 4,879 km\nMass: 3.3 × 10²³ kg\nOrbit: 88 days\nSurface Temp: -173°C to 427°C\nNo atmosphere\nSmallest planet, rocky with many craters"
+            },
+            {
+                name: "Venus", radius: 0.8, distance: 15, speed: 0.015, tilt: 177.4, rotation: 0.0004, texture: "venus.jpg",
+                info: "Diameter: 12,104 km\nMass: 4.87 × 10²⁴ kg\nOrbit: 225 days\nSurface Temp: 464°C\nThick CO₂ atmosphere\nHottest planet, rotates retrograde"
+            },
+            {
+                name: "Earth", radius: 1, distance: 20, speed: 0.01, tilt: 23.5, rotation: 0.05, texture: "earth.jpg",
+                info: "Diameter: 12,742 km\nMass: 5.97 × 10²⁴ kg\nOrbit: 365.25 days\nSurface Temp: -88°C to 58°C\n71% water\nOnly planet with known life, 1 moon"
+            },
+            {
+                name: "Mars", radius: 0.7, distance: 25, speed: 0.008, tilt: 25.2, rotation: 0.048, texture: "mars.jpg",
+                info: "Diameter: 6,792 km\nMass: 6.42 × 10²³ kg\nOrbit: 687 days\nSurface Temp: -153°C to 20°C\nThin CO₂ atmosphere\nRed due to iron oxide, 2 moons"
+            },
+            {
+                name: "Jupiter", radius: 2.5, distance: 35, speed: 0.004, tilt: 3.1, rotation: 0.1, texture: "jupiter.jpg",
+                info: "Diameter: 139,820 km\nMass: 1.898 × 10²⁷ kg\nOrbit: 11.86 years\nSurface Temp: -145°C\nGas giant\nLargest planet, Great Red Spot, 79 moons"
+            },
+            {
+                name: "Saturn", radius: 2, distance: 45, speed: 0.003, tilt: 26.7, rotation: 0.09, texture: "saturn.jpg",
+                info: "Diameter: 116,460 km\nMass: 5.68 × 10²⁶ kg\nOrbit: 29.46 years\nSurface Temp: -184°C\nFamous rings\nGas giant, 83 moons with orbits"
+            },
+            {
+                name: "Uranus", radius: 1.5, distance: 55, speed: 0.002, tilt: 97.8, rotation: 0.06, texture: "uranus.jpg",
+                info: "Diameter: 50,724 km\nMass: 8.68 × 10²⁵ kg\nOrbit: 84 years\nSurface Temp: -224°C\nIce giant\nSideways rotation, faint rings, 27 moons"
+            },
+            {
+                name: "Neptune", radius: 1.5, distance: 65, speed: 0.0015, tilt: 28.3, rotation: 0.07, texture: "neptune.jpg",
+                info: "Diameter: 49,244 km\nMass: 1.02 × 10²⁶ kg\nOrbit: 164.8 years\nSurface Temp: -201°C\nIce giant\nDeep blue, strongest winds, 14 moons"
+            }
+        ];
+
+        // Planet Meshes and Circular Orbits
+        const planetMeshes = [];
+        planets.forEach((planet) => {
+            const geometry = new THREE.SphereGeometry(planet.radius, 32, 32);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: planet.name === "Sun" ? 0xffff00 : 0x000000,
+                emissiveIntensity: planet.name === "Sun" ? 1 : 0
+            });
+
+            loader.load(`textures/${planet.texture}`,
+                (texture) => { material.map = texture; material.needsUpdate = true; },
+                undefined,
+                () => console.warn(`Failed to load texture for ${planet.name}`)
+            );
+
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = planet.distance;
+            mesh.rotation.x = planet.tilt * Math.PI / 180;
+            scene.add(mesh);
+
+            // Circular Orbit Path
+            if (planet.distance > 0) {
+                const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.05, planet.distance + 0.05, 64);
+                const orbitMaterial = new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide });
+                const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+                orbit.rotation.x = Math.PI / 2;
+                scene.add(orbit);
+            }
+
+            planetMeshes.push({ mesh, planet, angle: 0 });
+        });
+
+        // Saturn's Rings
+        const ringGeometry = new THREE.RingGeometry(2.5, 4, 32);
+        const ringMaterial = new THREE.MeshStandardMaterial({ color: 0xe6b800, side: THREE.DoubleSide });
+        const rings = new THREE.Mesh(ringGeometry, ringMaterial);
+        rings.rotation.x = Math.PI / 2;
+        planetMeshes[6].mesh.add(rings);
+
+        // Jupiter's Great Red Spot
+        const spotGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+        const spotMaterial = new THREE.MeshStandardMaterial({ color: 0xcc3300 });
+        const redSpot = new THREE.Mesh(spotGeometry, spotMaterial);
+        redSpot.position.set(2.5, 0, 0);
+        planetMeshes[5].mesh.add(redSpot);
+
+        // Asteroid Belt
+        const asteroidGeometry = new THREE.BufferGeometry();
+        const asteroidCount = 1000;
+        const asteroidPos = new Float32Array(asteroidCount * 3);
+        for (let i = 0; i < asteroidCount; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 27 + Math.random() * 5;
+            asteroidPos[i * 3] = Math.cos(angle) * radius;
+            asteroidPos[i * 3 + 1] = (Math.random() - 0.5) * 0.5;
+            asteroidPos[i * 3 + 2] = Math.sin(angle) * radius;
+        }
+        asteroidGeometry.setAttribute('position', new THREE.BufferAttribute(asteroidPos, 3));
+        const asteroidMaterial = new THREE.PointsMaterial({ color: 0x888888, size: 0.1 });
+        const asteroids = new THREE.Points(asteroidGeometry, asteroidMaterial);
+        scene.add(asteroids);
+
+        // Comet with Tail
+        const cometGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+        const cometMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff });
+        const comet = new THREE.Mesh(cometGeometry, cometMaterial);
+        scene.add(comet);
+        const tailGeometry = new THREE.ConeGeometry(0.5, 3, 16);
+        const tailMaterial = new THREE.MeshStandardMaterial({ color: 0x88ccff, transparent: true, opacity: 0.5 });
+        const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+        tail.rotation.x = Math.PI;
+        tail.position.z = -1.5;
+        comet.add(tail);
+
+        // Dust Particles
+        const dustGeometry = new THREE.BufferGeometry();
+        const dustCount = 2000;
+        const dustPos = new Float32Array(dustCount * 3);
+        for (let i = 0; i < dustCount; i++) {
+            dustPos[i * 3] = (Math.random() - 0.5) * 150;
+            dustPos[i * 3 + 1] = (Math.random() - 0.5) * 150;
+            dustPos[i * 3 + 2] = (Math.random() - 0.5) * 150;
+        }
+        dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+        const dustMaterial = new THREE.PointsMaterial({ color: 0x666666, size: 0.05, transparent: true, opacity: 0.3 });
+        const dust = new THREE.Points(dustGeometry, dustMaterial);
+        scene.add(dust);
+
+        // Raycasting for Click Detection
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const infoPanel = document.getElementById('infoPanel');
+        const planetName = document.getElementById('planetName');
+        const planetInfo = document.getElementById('planetInfo');
+        const closeBtn = document.getElementById('closeBtn');
+
+        window.addEventListener('click', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
+
+            if (intersects.length > 0) {
+                const planet = intersects[0].object;
+                const data = planetMeshes.find(p => p.mesh === planet).planet;
+                planetName.textContent = data.name;
+                planetInfo.textContent = data.info;
+                infoPanel.style.display = 'block';
+            }
+        });
+
+        closeBtn.addEventListener('click', () => {
+            infoPanel.style.display = 'none';
+        });
+
+        // Animation Loop with Circular Orbits
+        function animate() {
+            requestAnimationFrame(animate);
+
+            planetMeshes.forEach((planet) => {
+                const { mesh, planet: data } = planet;
+                if (data.distance > 0) {
+                    // Update angle for circular orbit
+                    planet.angle += data.speed;
+                    mesh.position.x = Math.cos(planet.angle) * data.distance;
+                    mesh.position.z = Math.sin(planet.angle) * data.distance;
+                }
+                mesh.rotation.y += data.rotation; // Self-rotation
+            });
+
+            // Comet Animation (elliptical for variety)
+            const cometAngle = Date.now() * 0.0005;
+            comet.position.x = Math.cos(cometAngle) * 80;
+            comet.position.z = Math.sin(cometAngle) * 80;
+            comet.position.y = Math.sin(cometAngle * 2) * 20;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Responsive Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
