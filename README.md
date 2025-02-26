@@ -1,6 +1,6 @@
 # 🌍 3D Solar System Simulator 🚀
 
-![3D Solar System](https://images.app.goo.gl/3FQafJjqtTgqQyHt6)
+![3D Solar System](🚀🌍)
 
 ### 🌟 Explore the Universe in Your Browser!  
 A stunning **3D Solar System Simulator** built using [Three.js](https://threejs.org/), where planets orbit realistically, stars glow, and you can interact with celestial bodies to learn exciting space facts!  
@@ -22,7 +22,7 @@ A stunning **3D Solar System Simulator** built using [Three.js](https://threejs.
 
 1. Clone this repository:  
    ```sh
-   git clone https://github.com/yourusername/3d-solar-system.git
+   git clone https://github.com/Coding-Shanks/3d-solar-system.git
    cd 3d-solar-system
    ```
 
@@ -46,7 +46,7 @@ A stunning **3D Solar System Simulator** built using [Three.js](https://threejs.
 
 ---
 
-## 📸 Screenshots  
+## 📸 Screenshots
 🔹 Experience the Solar System like never before!
 
 ---
@@ -81,9 +81,8 @@ Want to improve this project? Follow these steps:
 ---
 
 ## 🌍 Connect With Me  
-🔗 **GitHub**: [yourusername](https://github.com/yourusername)  
-🔗 **YouTube**: Your Channel Name  
-🔗 **Twitter**: [@yourhandle](https://twitter.com/yourhandle)  
+🔗 **GitHub**: [Coding-Shanks](https://github.com/Coding-Shanks)  
+🔗 **YouTube**: [SHANKS](https://www.youtube.com/@Coding_With_Shanks)
 
 🚀 If you like this project, don't forget to ⭐ star the repo!
 
