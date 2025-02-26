@@ -5,8 +5,6 @@
 ### 🌟 Explore the Universe in Your Browser!  
 A stunning **3D Solar System Simulator** built using [Three.js](https://threejs.org/), where planets orbit realistically, stars glow, and you can interact with celestial bodies to learn exciting space facts!  
 
-🔗 **[Live Demo](#)** (Add your hosted link here)
-
 ---
 
 ## 🚀 Features  
